@@ -107,6 +107,6 @@ def main() -> None:
   pp.close()
 
 if __name__ == '__main__':
-  print('Polynomial of Best Approximation')
+  print('Best Approximation for Tan function')
   main()
   print('Finished.')
