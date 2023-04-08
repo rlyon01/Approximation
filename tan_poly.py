@@ -11,50 +11,14 @@ import numpy as np
 import matplotlib.pyplot as pp
 from minmax import remez_poly
 
-def print_coeff(coeff: list[float], prec: int) -> None:
-  """Display the polynomial coefficients on the current terminal line.
-
-  Args:
-    coeff: The list of polynomial coefficients.
-    prec: The required display floating point precision.
-
-  Returns:
-    None.
-  """
-  print('Coefficients: [{0}]'
-    .format(', '.join(['{0:.{1}e}'.format(c, prec) for c in coeff])))
-
-def print_err(err: float, prec: int) -> None:
-  """Display the error on the current terminal line.
-
-  Args:
-    err: The floating-point value of the error.
-    prec: The required display floating-point precision.
-
-  Returns:
-    None.
-    """
-  print('Error: {0:.{1}e}'.format(err, prec))
-
-def print_iter(it: int) -> None:
-  """Display the number of iterations on the current terminal line.
-
-  Args:
-    it: The number of iterations.
-
-  Returns:
-    None
-  """
-  print('Iterations: {0}'.format(it))
-
-def display_residual(
+def plot_residual(
   func,
   coeffs: list[float],
   start: float,
   stop: float,
   num: int,
 ) -> None:
-  """Display the residual error over the grid for given polynomial and function.
+  """Plot the residual error over the grid for given polynomial and function.
 
   Args:
     func: A function (or lambda) f: X -> R.
@@ -132,11 +96,12 @@ def main() -> None:
   # calculate the best approximation on grid
   coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
   # display the results
-  print_coeff(coefficients, 16)
-  print_err(error, 3)
-  print_iter(it)
+  print('Coefficients: [{0}]'
+    .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
+  print('Error: {0:.3e}'.format(error))
+  print('Iterations: {0}'.format(it))
   plot_polynomial(f, coefficients, lower, upper, num)
-  display_residual(f, coefficients, lower, upper, num)
+  plot_residual(f, coefficients, lower, upper, num)
   # display results on screen
   pp.show()
   pp.close()
