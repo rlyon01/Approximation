@@ -59,25 +59,26 @@ def remez_poly(
   f = [func(i) for i in s]
   # alternate signs column
   alt = [(-1)**(index) for index in range(n_deg + 2)]
-  # starting list of trial points on the grid (Chebyshev nodes)
+  # starting list of trial points on the grid (at Chebyshev nodes)
   u = [round(0.5*(num-1)*(1.0 - np.cos(index*np.pi/(n_deg + 1))))
-    for index in range(n_deg + 2)]
+     for index in range(n_deg + 2)]
   for it in range(max_iter):
-    # create square matrix for linear system
+    # create square matrix for lhs of linear system
     v = np.vander([s[i] for i in u], n_deg + 1, True)
     a = np.insert(v, n_deg + 1, alt, 1)
-    # create column vector for linear system
+    # create column vector for rhs of linear system
     b = [f[i] for i in u]
     # solve linear system ax = b
     x = np.linalg.solve(a, b)
     # retrieve polynomial coefficients and error
     p = x[:-1]
-    e_iter = float(np.fabs(x[-1]))
+    ei = float(np.fabs(x[-1]))
     # if optimal polynomial then exit
-    if e == e_iter:
+    if e == ei:
+      it += 1
       break
-    # save error for next iteration
-    e = e_iter
+    # save error
+    e = ei
     # calculate the residual error over the grid
     r = f - np.polynomial.polynomial.polyval(s, p)
     # update the list of trial points to match extrema in residual error
