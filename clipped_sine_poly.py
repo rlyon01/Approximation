@@ -1,116 +1,56 @@
 """ Test the polynomial approximation of a clipped sine on a discrete grid.
 
-This test case is taken from 'Tchebycheff approximation on a discrete point set:
-algorithms old and new', William Edward McBride, Doctoral Thesis, 1973,
-Problem E, Page 53.
+The clipped sine is defined by the nested function:
 
-The second algorithm of Remez is used to find the optimal polynomial. The
-accuracy of the approximation matches that reported by McBride.
+    def clipped_sine(x : float) -> float:
+      return np.clip(np.sin(x), -0.7, +0.7)
+
+The approximation is for required for the interval [-pi, pi] using an
+polynomial degree of 17. The grid contains 4096 points.
+
+The first algorithm of Remez is used to find the optimal polynomial. The
+resulting polynomial is not particularly accurate with a peak error of
+2.40393e-02. The algorithm requires 56 iterations to converge to the optimal
+polynomial.
 """
 import numpy as np
-import matplotlib.pyplot as pp
-from minmax import remez_poly
-
-def plot_residual(
-  func,
-  coeffs: list[float],
-  start: float,
-  stop: float,
-  num: int,
-) -> None:
-  """Plot the residual error over the grid for given polynomial and function.
-
-  Args:
-    func: A function (or lambda) f: X -> R.
-    coeffs: List of the polynomial coeffcients.
-    start: The starting value of the grid.
-    stop: The end value of the grid.
-    num: The number of points on the grid.
-
-  Returns:
-    None.
-  """
-  # construct the grid
-  s = np.linspace(start, stop, num)
-  # function mapped onto grid
-  f = [func(i) for i in s]
-  residual = f - np.polynomial.polynomial.polyval(s, coeffs)
-  # plot the residual error
-  pp.figure(2)
-  pp.plot(s, residual, color='blue')
-  pp.xlabel('x')
-  pp.ylabel('Error')
-  pp.grid(True)
-  pp.title('Residual Error')
-
-def plot_polynomial(
-  func,
-  coeffs: list[float],
-  start: float,
-  stop: float,
-  num: int,
-) -> None:
-  """Plot the polynomial and function over the grid
-
-  Args:
-    func: A function (or lambda) f: X -> R.
-    coeffs: List of the polynomial coeffcients.
-    start: The starting value of the grid.
-    stop: The end value of the grid.
-    num: The number of points on the grid.
-
-  Returns:
-    None.
-  """
-  # construct the absissa grid
-  x = np.linspace(start, stop, num)
-  # function mapped over grid
-  f = [func(i) for i in x]
-  # polynomial mapped over grid
-  p = np.polynomial.polynomial.polyval(x, coeffs)
-  # plot the function and polynomial
-  pp.figure(1)
-  pp.plot(x, p, color='red', label='Polynomial')
-  pp.plot(x, f, 'b.', markersize='3', label='Clipped Sine')
-  pp.xlabel('x')
-  pp.ylabel('y')
-  pp.grid(True)
-  pp.title('Polynomial Approximation of Clipped Sine')
-  pp.legend()
+from matplotlib.pyplot import show, close
+from minmax import remez_poly1
+from utility import plot_residual, plot_polynomial
 
 def main() -> None:
   """Polynomial approximation of tan on a discrete grid
   """
-  # define the function to be approximated
+  # The clipped sine
   def clipped_sine(x : float) -> float:
-    x = np.sin(x)
-    if np.fabs(x) > 0.7:
-        x = 0.7
-    return x
+    return np.clip(np.sin(x), -0.7, 0.7)
   # lower limit on interval of approximation
-  lower = -1.0 * np.pi
+  lower = -np.pi
   # upper limit on interval of approximation
-  upper = +1.0 * np.pi
+  upper = np.pi
   # number of grid points in the interval
-  num = 101
+  num = 4096
   # maximum number of iterations
-  mit = 10
+  mit = 100
   # polynomial order
-  order = 5
+  order = 17
   # calculate the best approximation on grid
-  coefficients, error, it = remez_poly(clipped_sine, lower, upper, num, order, mit)
+  coefficients, error, it = remez_poly1(clipped_sine, lower, upper, num,
+                                        order, mit)
   # display the results
   print('Coefficients: [{0}]'
     .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
-  print('Error: {0:.3e}'.format(error))
+  print('Error: {0:.5e}'.format(error))
   print('Iterations: {0}'.format(it))
-  plot_polynomial(clipped_sine, coefficients, lower, upper, num)
-  plot_residual(clipped_sine, coefficients, lower, upper, num)
+  plot_polynomial(clipped_sine, coefficients, lower, upper, num,
+                  'Polynomial approximation of clipped sine')
+  plot_residual(clipped_sine, coefficients, lower, upper, num,
+                'Residual Error for polynimial approximation')
   # display results on screen
-  pp.show()
-  pp.close()
+  show()
+  close()
 
 if __name__ == '__main__':
-  print('Best Approximation for clipped Sine function')
+  print('Best approximation for clipped sine function')
   main()
   print('Finished.')

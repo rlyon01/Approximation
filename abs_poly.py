@@ -1,11 +1,14 @@
-""" Test the polynomial approximation for the tan function on a discrete grid.
+""" Test the polynomial approximation for the abs function on a discrete grid.
 
-This test case is taken from 'Tchebycheff approximation on a discrete point set:
-algorithms old and new', William Edward McBride, Doctoral Thesis, 1973,
-Problem C, Page 52.
+This example is from:
 
-The first algorithm of Remez is used to find the optimal polynomial. The
-accuracy and convergence of the approximation matches that reported by McBride.
+  Ricardo Pachón and Lloyd N. Trefethen, "Barycentric-Remez algorithms for best
+  polynomial approximation in the chebfun system", BIT Numer Math (2009) 49,
+  page 736.
+
+A grid size of 48000 was used. A total of 24 iterations were required using the
+first Remez algorithm. The approximation calculated by this test is close to
+the results reported by the reference above, but it could be better.
 """
 import numpy as np
 from matplotlib.pyplot import show, close
@@ -16,17 +19,17 @@ def main() -> None:
   """Polynomial approximation of tan on a discrete grid
   """
   # define the function to be approximated
-  f = np.tan
+  f = np.fabs
   # lower limit on interval of approximation
-  lower = 0.0
+  lower = -1.0
   # upper limit on interval of approximation
-  upper = 0.25 * np.pi
+  upper = 1.0
   # number of grid points in the interval
-  num = 51
+  num = 48000
   # maximum number of iterations
-  mit = 20
+  mit = 50
   # polynomial order
-  order = 5
+  order = 11
   # calculate the best approximation on grid
   coefficients, error, it = remez_poly1(f, lower, upper, num, order, mit)
   # display the results
@@ -35,7 +38,7 @@ def main() -> None:
   print('Error: {0:.3e}'.format(error))
   print('Iterations: {0}'.format(it))
   plot_polynomial(f, coefficients, lower, upper, num,
-                  'Polynomial Approximation of tan function')
+                  'Polynomial approximation of abs function')
   plot_residual(f, coefficients, lower, upper, num,
                 'Residual Error for polynimial approximation')
   # display results on screen
@@ -43,6 +46,6 @@ def main() -> None:
   close()
 
 if __name__ == '__main__':
-  print('Best approximation for tan function')
+  print('Best approximation for abs function')
   main()
   print('Finished.')
