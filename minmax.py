@@ -128,7 +128,7 @@ def remez_poly1(
     # get the coordinate of the extreme residual
     pos = np.argmax(np.fabs(r_grid))
     # check if this is the optimal polynomial
-    if e_it <= 1.0000000001 * e:
+    if e_it < 1.000000000000001 * e:
       return (p, e_it, it+1)
     # save current error
     e = e_it
