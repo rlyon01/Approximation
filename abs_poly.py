@@ -25,9 +25,9 @@ def main() -> None:
   # upper limit on interval of approximation
   upper = 1.0
   # number of grid points in the interval
-  num = 48000
+  num = 96000
   # maximum number of iterations
-  mit = 50
+  mit = 150
   # polynomial order
   order = 11
   # calculate the best approximation on grid
@@ -35,7 +35,7 @@ def main() -> None:
   # display the results
   print('Coefficients: [{0}]'
     .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
-  print('Error: {0:.3e}'.format(error))
+  print('Error: {0:.6e}'.format(error))
   print('Iterations: {0}'.format(it))
   plot_polynomial(f, coefficients, lower, upper, num,
                   'Polynomial approximation of abs function')
