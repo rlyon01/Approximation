@@ -1,3 +1,7 @@
 pylintrc
 .vscode/settings.json
 __pycache__/minmax.cpython-39.pyc
+HexuanLiu.py
+DKenefake.py
+__pycache__/utility.cpython-39.pyc
+compare_poly.py
