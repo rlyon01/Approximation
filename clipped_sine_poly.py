@@ -36,7 +36,7 @@ def main() -> None:
   order = 17
   # calculate the best approximation on grid
   coefficients, error, it = remez_poly1(clipped_sine, lower, upper, num,
-                                        order, mit)
+    order, mit)
   # display the results
   print('Coefficients: [{0}]'
     .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
