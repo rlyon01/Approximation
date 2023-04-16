@@ -48,8 +48,8 @@ def debug_residual(
   pp.ylabel('Error')
   pp.grid(True)
   pp.title('Residual Error')
-  pp.show()
-  pp.close()
+  # display the plot
+  pp.show
 
 def plot_residual(
   func,
@@ -82,7 +82,7 @@ def plot_residual(
   f = np.vectorize(func)(s)
   residual = f - np.polynomial.polynomial.polyval(s, coeffs)
   # plot the residual error
-  pp.figure('Residual Error')
+  pp.figure('Residual error')
   pp.plot(s, residual, color='blue')
   pp.xlabel('x')
   pp.ylabel('Error')
@@ -132,3 +132,7 @@ def plot_polynomial(
     pp.title(title)
   pp.legend()
 
+def show() -> None:
+  """ Display plots and block until the user has closed all figures."""
+  pp.show(block=True)
+  return

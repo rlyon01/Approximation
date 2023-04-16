@@ -20,9 +20,8 @@ calculating the abs approximation. The approximation calculated by this test is
 close to the results reported by the reference above.
 """
 import numpy as np
-from matplotlib.pyplot import show, close
-from minmax import remez_poly1
-from utility import plot_residual, plot_polynomial
+from minmax import remez_poly
+from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
   """Polynomial approximation of abs on a discrete grid
@@ -40,33 +39,32 @@ def main() -> None:
   # polynomial order
   order = 5
   # calculate the best approximation on grid
-  coefficients, error, it = remez_poly1(f, lower, upper, num, order, mit)
+  coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
   # display the results
-  print('SQRT Coefficients: [{0}]'
+  print('Polynomial Coefficients for sqrt approximation: [{0}]'
     .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
   print('Error: {0:.6e}'.format(error))
   print('Iterations: {0}'.format(it))
 
   # double the coefficients
   double_coefficients = np.zeros(2*order + 1)
-
   for i in range(coefficients.size):
     double_coefficients[2*i] = coefficients[i]
-  print('ABS coefficients: [{0}]'
+
+  print('Polynomial coefficients for abs approximation: [{0}]'
     .format(', '.join(['{0:.16e}'.format(c) for c in double_coefficients])))
 
-  f = np.fabs
+  f = abs
   lower = -1.0
   num *= 2
   plot_polynomial(f, double_coefficients, lower, upper, num,
                   'Polynomial approximation of abs function')
   plot_residual(f, double_coefficients, lower, upper, num,
-                'Residual Error for polynomial approximation')
+                'Residual error for polynomial approximation')
   # display results on screen
   show()
-  close()
 
 if __name__ == '__main__':
-  print('Best approximation for abs function')
+  print('Best best polynomial approximation for abs function')
   main()
   print('Finished.')

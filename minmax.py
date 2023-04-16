@@ -1,7 +1,7 @@
 """Discrete Remez Algorithms for Polynomials
 
 Find optimal polynomial for approximating a function on a discrete grid using
-Remez's algorithms.
+Remez's first algorithm.
 
 Typical usage:
 
@@ -18,12 +18,12 @@ Typical usage:
   # polynomial order
   order = 5
   # get coefficients of optimal polynomial using the first algorithm
-  coefficients, error, it = remez_poly1(f, lower, upper, num, order, mit)
+  coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
 """
 import numpy as np
 # from utility import debug_residual
 
-def remez_poly1(
+def remez_poly(
   func,
   start: float,
   stop: float,
@@ -33,7 +33,7 @@ def remez_poly1(
 ) -> tuple[np.ndarray, float, int]:
   """ Discrete Remez Algorithm for polynomials
 
-  This is the first Remez algorithm, hence the function name remez_poly1.
+  This is the first Remez algorithm.
 
   Args:
     func: A function (or lambda) f: X -> R.
@@ -53,19 +53,20 @@ def remez_poly1(
   def alternates_column() -> np.ndarray:
     """Generate a column vector with alternating sign integers of magnitude one.
 
-      The column will contain n_deg+2 elements. This column is inserted as
-      the rightmost column in the square matrix A. For example:
+    The column will contain n_deg+2 elements. This column is inserted as
+    the rightmost column in the square matrix A. For example:
 
-      column[0] = +1.0
-      column[1] = -1.0
-      column[2] = +1.0
-      ...
-      column[n_deg + 1] = (-1.0)**(n_deg + 1)
-      Args:
-        None.
+    column[0] = +1.0
+    column[1] = -1.0
+    column[2] = +1.0
+    ...
+    column[n_deg + 1] = (-1.0)**(n_deg + 1)
 
-      Returns:
-        An array of floats containing exactly n_deg+2 elements.
+    Args:
+      None.
+
+    Returns:
+      An array of floats containing exactly n_deg+2 elements.
     """
     return np.vectorize(lambda i : (-1.0)**(i))(np.arange(n_deg + 2))
 
@@ -74,13 +75,13 @@ def remez_poly1(
 
     Generate an array containing the starting positions for the first iteration.
     These points are distributed across the grid starting at zero with the last
-    point at num - 1 and are the Chebyshev nodes. The value are rounded to
+    point at num - 1 and are the Chebyshev nodes. The values are rounded to
     the nearest integer.
 
     Args:
       None.
 
-    Returns
+    Returns:
       An array containing the starting integer positions in ascending order.
     """
     return np.vectorize(
@@ -99,7 +100,7 @@ def remez_poly1(
 
     Returns:
       A boolean value which is True if the two floating pointer numbers have
-      the same matching sign, otherwise False is returned.
+      the same sign, otherwise False is returned.
     """
     return (first < 0.0 and second < 0.0) or (first >= 0.0 and second >=0.0)
 
@@ -123,27 +124,27 @@ def remez_poly1(
     # retrieve polynomial coefficients and error
     p = x[:-1]
     e_it = abs(x[-1])
-    # calculate the residual error over the grid
-    r_grid = f - np.polynomial.polynomial.polyval(s, p)
-    # get the coordinate of the extreme residual
-    pos = np.argmax(np.fabs(r_grid))
-    # check if this is the optimal polynomial
+    # check this iteration is close to the optimal polynomial
     if e_it < 1.000000000000001 * e:
       return (p, e_it, it+1)
     # save current error
     e = e_it
-    # update the list of trial points to include the point at the extreme
+    # calculate the residual error over the grid
+    r_grid = f - np.polynomial.polynomial.polyval(s, p)
+    # get the position of the extreme residual
+    pos = np.argmax(np.fabs(r_grid))
+    # update the list of trial points to include a point at the extreme
     if pos < u[0]:
       if not match_sign(r_grid[u[0]], r_grid[pos]):
         u = np.roll(u, 1)
       u[0] = pos
     elif pos > u[n_deg + 1]:
-      if not match_sign(r_grid[u[n_deg + 1]], r_grid[pos]):
+      if not match_sign(r_grid[pos], r_grid[u[n_deg + 1]]):
         u = np.roll(u, -1)
       u[n_deg + 1] = pos
     else:
-      for i in range(0, n_deg + 1):
-        # test if position is in the interval u[i], ..., u[i+1], inclusive
+      for i in range(n_deg + 1):
+        # test if position is in the interval [u[i], u[i+1]]
         test = u[i] <= pos and pos <= u[i+1]
         if test:
           if match_sign(r_grid[u[i]], r_grid[pos]):

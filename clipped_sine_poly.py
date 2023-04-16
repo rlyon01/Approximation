@@ -14,16 +14,16 @@ resulting polynomial is not particularly accurate with a peak error of
 polynomial.
 """
 import numpy as np
-from matplotlib.pyplot import show, close
-from minmax import remez_poly1
-from utility import plot_residual, plot_polynomial
+from minmax import remez_poly
+from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
   """Polynomial approximation of tan on a discrete grid
   """
-  # The clipped sine
+  # The clipped sine function
   def clipped_sine(x : float) -> float:
     return np.clip(np.sin(x), -0.7, 0.7)
+  
   # lower limit on interval of approximation
   lower = -np.pi
   # upper limit on interval of approximation
@@ -35,7 +35,7 @@ def main() -> None:
   # polynomial order
   order = 17
   # calculate the best approximation on grid
-  coefficients, error, it = remez_poly1(clipped_sine, lower, upper, num,
+  coefficients, error, it = remez_poly(clipped_sine, lower, upper, num,
     order, mit)
   # display the results
   print('Coefficients: [{0}]'
@@ -43,14 +43,13 @@ def main() -> None:
   print('Error: {0:.5e}'.format(error))
   print('Iterations: {0}'.format(it))
   plot_polynomial(clipped_sine, coefficients, lower, upper, num,
-                  'Polynomial approximation of clipped sine')
+    'Polynomial approximation of clipped sine')
   plot_residual(clipped_sine, coefficients, lower, upper, num,
-                'Residual Error for polynimial approximation')
+    'Residual error for polynomial approximation')
   # display results on screen
   show()
-  close()
 
 if __name__ == '__main__':
-  print('Best approximation for clipped sine function')
+  print('Best polynomial approximation for clipped sine function')
   main()
   print('Finished.')
