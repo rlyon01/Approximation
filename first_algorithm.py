@@ -140,7 +140,7 @@ def remez_poly(
     error = eiter
     # calculate the residual error over the grid
     r_grid = f - np.polynomial.polynomial.polyval(grid, p)
-    # debug_residual(it + 1, s, r_grid, u)
+    # debug_residual(it + 1, grid, r_grid, u)
     # get the position of the extreme residual
     pos = np.argmax(np.fabs(r_grid))
     # update the list of trial points to include a point at the extreme
@@ -161,5 +161,5 @@ def remez_poly(
           else:
             u[i+1] = pos
           break
-    # debug_residual(it + 1, s, r_grid, u)
+    # debug_residual(it + 1, grid, r_grid, u)
   raise RuntimeWarning('Failed to converge!')
