@@ -1,14 +1,22 @@
 """ Test the polynomial approximation for the abs function on a discrete grid.
 
-This example is from:
+Module:
+  first_abs_poly.py
 
-  Ricardo Pachón and Lloyd N. Trefethen, "Barycentric-Remez algorithms for best
-  polynomial approximation in the chebfun system", BIT Numer Math (2009) 49,
-  page 736.
+Usage:
 
-A grid size of 9600 was used. A total of 22 iterations were required using the
-first Remez algorithm. The approximation calculated by this test is close to
-the results reported by the reference above, but it could be better.
+  python first_abs_poly.py
+
+  Test first_algorithm module by finding a polynomial approximation to the
+  abs function. This test is from:
+
+    Ricardo Pachón and Lloyd N. Trefethen, "Barycentric-Remez algorithms for
+    best polynomial approximation in the chebfun system",
+    BIT Numer Math (2009) 49, page 736.
+
+  A grid size of 9600 was used. A total of 22 iterations were required using the
+  first Remez algorithm. The approximation calculated by this test is close to
+  the results reported by the reference above, but it could be better.
 """
 from first_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
