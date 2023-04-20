@@ -4,7 +4,10 @@ Module:
     convert.py
 
 Typical usage:
-    actual = convert.calibrated(reading)
+    >>> from convert import calibrated
+    >>> reading = 21
+    >>> actual = convert.calibrated(reading)
+    >>> print(f'Actual = {actual}')
 """
 
 # Lookup table to convert sensor reading to calibrated value
