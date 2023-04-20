@@ -1,4 +1,15 @@
-""" Test the polynomial approximation for the abs function on a discrete grid.
+""" Test the polynomial approximation for the abs function.
+
+This test uses Remez's first algorithm as implemented in the module
+first_algorithm. This test is from:
+
+  Ricardo Pachón and Lloyd N. Trefethen, "Barycentric-Remez algorithms for best
+  polynomial approximation in the chebfun system", BIT Numer Math (2009) 49,
+  page 736.
+
+A grid size of 9600 is used. A total of 22 iterations are required for the
+algorithm to complete. The approximation calculated by this test is close to
+the results reported by the reference above, but it could be better.
 
 Module:
   first_abs_poly.py
@@ -6,23 +17,12 @@ Module:
 Usage:
 
   python first_abs_poly.py
-
-  Test first_algorithm module by finding a polynomial approximation to the
-  abs function. This test is from:
-
-    Ricardo Pachón and Lloyd N. Trefethen, "Barycentric-Remez algorithms for
-    best polynomial approximation in the chebfun system",
-    BIT Numer Math (2009) 49, page 736.
-
-  A grid size of 9600 was used. A total of 22 iterations were required using the
-  first Remez algorithm. The approximation calculated by this test is close to
-  the results reported by the reference above, but it could be better.
 """
 from first_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
-  """Polynomial approximation of tan on a discrete grid"""
+  """Polynomial approximation of abs on a discrete grid"""
   # define the function to be approximated
   f = abs
   # lower limit on interval of approximation
@@ -43,13 +43,13 @@ def main() -> None:
   print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
-  plot_residual(f, coefficients, lower, upper, num,
-    'Residual error for polynomial approximation')
+  # plot results
   plot_polynomial(f, coefficients, lower, upper, num,
     'Polynomial approximation for abs function')
-  # display results on screen
+  plot_residual(f, coefficients, lower, upper, num,
+    'Residual error for polynomial approximation')
   show()
-  
+
 if __name__ == '__main__':
   print('Best polynomial approximation for abs function')
   main()

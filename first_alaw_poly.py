@@ -1,12 +1,19 @@
-"""Find the optimal polynomial approximation of the sensor conversion.
+"""Test the polynomial approximation for the alaw function.
 
-The polynomial approximation is calculated using first algorithm of Remez
-on a discrete grid over the interval [-1, +1] with 2048 points. The polynomial
-order is set to 15.
+This test uses Remez's first algorithm as implemented in the module
+first_algorithm. A discrete grid over the interval [-1, +1] with 2048 points is
+used. The polynomial order is set to 15.
 
-The algorithm was completed after 52 iterations. The resulting approximation
-has a maximum error of 1.349985e-01. Clearly this is not a good approximation,
-but the example is useful for testing the algorithm implementation.
+The algorithm is completed after 52 iterations. The resulting approximation
+has a maximum error of 1.349985e-01. This is not a good approximation, but the
+example is useful for testing the algorithm implementation.
+
+Module:
+  first_alaw_poly.py
+
+Usage:
+
+  python first_alaw_poly.py
 """
 from math import log
 from first_algorithm import remez_poly
@@ -37,6 +44,7 @@ def main() -> None:
   print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
+  # plot the results
   plot_residual(alaw, coefficients, lower, upper, num,
     'Residual error for polynomial approximation')
   plot_polynomial(alaw, coefficients, lower, upper, num,
