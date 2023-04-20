@@ -6,17 +6,15 @@ This example is from:
   polynomial approximation in the chebfun system", BIT Numer Math (2009) 49,
   page 736.
 
-A grid size of 48000 was used. A total of 24 iterations were required using the
+A grid size of 9600 was used. A total of 22 iterations were required using the
 first Remez algorithm. The approximation calculated by this test is close to
 the results reported by the reference above, but it could be better.
 """
-from matplotlib.pyplot import show, close
-from minmax import remez_poly
+from first_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
-  """Polynomial approximation of tan on a discrete grid
-  """
+  """Polynomial approximation of tan on a discrete grid"""
   # define the function to be approximated
   f = abs
   # lower limit on interval of approximation
@@ -24,22 +22,24 @@ def main() -> None:
   # upper limit on interval of approximation
   upper = 1.0
   # number of grid points in the interval
-  num = 96000
+  num = 9600
   # maximum number of iterations
-  mit = 150
+  mit = 30
   # polynomial order
   order = 11
+
   # calculate the best approximation on grid
   coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
+
   # display the results
-  print('Coefficients: [{0}]'
-    .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
-  print('Error: {0:.6e}'.format(error))
-  print('Iterations: {0}'.format(it))
-  plot_polynomial(f, coefficients, lower, upper, num,
-                  'Polynomial approximation of abs function')
+  print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
+  print(f'Error: {error:.6e}')
+  print(f'Iterations: {it}')
   plot_residual(f, coefficients, lower, upper, num,
-                'Residual Error for polynomial approximation')
+    'Residual error for polynomial approximation')
+  plot_polynomial(f, coefficients, lower, upper, num,
+    'Polynomial approximation for abs function')
+  # display results on screen
   show()
   
 if __name__ == '__main__':

@@ -49,7 +49,7 @@ def debug_residual(
   pp.grid(True)
   pp.title('Residual Error')
   # display the plot
-  pp.show
+  pp.show(block=True)
 
 def plot_residual(
   func,

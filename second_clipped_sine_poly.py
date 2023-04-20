@@ -3,31 +3,41 @@
 The clipped sine is defined by the nested function:
 
     def clipped_sine(x : float) -> float:
-      return np.clip(np.sin(x), -0.7, +0.7)
+      y = sin(x)
+      if y > 0.7071067811865475:
+        y = 0.7071067811865475
+      elif y < -0.7071067811865475:
+        y = -0.7071067811865475
+      return y
 
 The approximation is for required for the interval [-pi, pi] using an
 polynomial degree of 17. The grid contains 4096 points.
 
-The first algorithm of Remez is used to find the optimal polynomial. The
+The second algorithm of Remez is used to find the optimal polynomial. The
 resulting polynomial is not particularly accurate with a peak error of
-2.40393e-02. The algorithm requires 56 iterations to converge to the optimal
-polynomial.
+2.364630e-02 The algorithm requires 11 iterations to converge to the optimal
+polynomial. In this case the second algorithm is considerablely more efficient.
 """
-import numpy as np
-from minmax import remez_poly
+
+from math import sin, pi
+from second_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
-  """Polynomial approximation of tan on a discrete grid
-  """
+  """Polynomial approximation of clipped on a discrete grid"""
   # The clipped sine function
   def clipped_sine(x : float) -> float:
-    return np.clip(np.sin(x), -0.7, 0.7)
+    y = sin(x)
+    if y > 0.7071067811865475:
+      y = 0.7071067811865475
+    elif y < -0.7071067811865475:
+      y = -0.7071067811865475
+    return y
   
   # lower limit on interval of approximation
-  lower = -np.pi
+  lower = -pi
   # upper limit on interval of approximation
-  upper = np.pi
+  upper = pi
   # number of grid points in the interval
   num = 4096
   # maximum number of iterations
@@ -38,14 +48,13 @@ def main() -> None:
   coefficients, error, it = remez_poly(clipped_sine, lower, upper, num,
     order, mit)
   # display the results
-  print('Coefficients: [{0}]'
-    .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
-  print('Error: {0:.5e}'.format(error))
-  print('Iterations: {0}'.format(it))
-  plot_polynomial(clipped_sine, coefficients, lower, upper, num,
-    'Polynomial approximation of clipped sine')
+  print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
+  print(f'Error: {error:.6e}')
+  print(f'Iterations: {it}')
   plot_residual(clipped_sine, coefficients, lower, upper, num,
     'Residual error for polynomial approximation')
+  plot_polynomial(clipped_sine, coefficients, lower, upper, num,
+    'Polynomial approximation for clipped-sine function')
   # display results on screen
   show()
 

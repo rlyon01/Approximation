@@ -1,5 +1,12 @@
+"""Find the optimal polynomial approximation of the sensor conversion.
+
+The polynomial approximation is calculated using the first algorithm of Remez
+on a discrete grid. A 5th order polynomial is found after 8 iterations. The
+maximum error introduced by the approximation is 9.770320e-01.
+"""
+
 from convert import calibrated
-from minmax import remez_poly
+from first_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
@@ -13,22 +20,20 @@ def main() -> None:
   # number of grid points in the interval
   num = 161
   # maximum number of iterations
-  mit = 50
+  mit = 10
   # polynomial order
-  order = 11
+  order = 5
   # calculate the best approximation on grid
   coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
   # display the results
-  print('Coefficients: [{0}]'
-    .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
-  print('Error: {0:.6e}'.format(error))
-  print('Iterations: {0}'.format(it))
-  # generate plots
-  plot_polynomial(f, coefficients, lower, upper, num,
-    'Polynomial approximation for sensor conversion')
+  print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
+  print(f'Error: {error:.6e}')
+  print(f'Iterations: {it}')
   plot_residual(f, coefficients, lower, upper, num,
-    'Residual Error for polynomial approximation')
-  # display plots on screen
+    'Residual error for polynomial approximation')
+  plot_polynomial(f, coefficients, lower, upper, num,
+    'Polynomial approximation for sensor function')
+  # display results on screen
   show()
 
 if __name__ == '__main__':

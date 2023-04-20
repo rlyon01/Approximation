@@ -4,11 +4,11 @@ This test case is taken from 'Tchebycheff approximation on a discrete point set:
 algorithms old and new', William Edward McBride, Doctoral Thesis, 1973,
 Problem C, Page 52.
 
-The first algorithm of Remez is used to find the optimal polynomial. The
+The second algorithm of Remez is used to find the optimal polynomial. The
 accuracy and convergence of the approximation matches that reported by McBride.
 """
 from math import tan, pi
-from minmax import remez_poly
+from second_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
@@ -23,20 +23,21 @@ def main() -> None:
   # number of grid points in the interval
   num = 51
   # maximum number of iterations
-  mit = 20
+  mit = 10
   # polynomial order
   order = 5
+
   # calculate the best approximation on grid
   coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
+
   # display the results
-  print('Coefficients: [{0}]'
-    .format(', '.join(['{0:.16e}'.format(c) for c in coefficients])))
-  print('Error: {0:.3e}'.format(error))
-  print('Iterations: {0}'.format(it))
-  plot_polynomial(f, coefficients, lower, upper, num,
-    'Polynomial approximation for tan function')
+  print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
+  print(f'Error: {error:.6e}')
+  print(f'Iterations: {it}')
   plot_residual(f, coefficients, lower, upper, num,
     'Residual error for polynomial approximation')
+  plot_polynomial(f, coefficients, lower, upper, num,
+    'Polynomial approximation for tan function')
   # display results on screen
   show()
 

@@ -1,23 +1,27 @@
-"""Discrete Remez Algorithms for Polynomials
+"""Discrete Remez Algorithm for Polynomials
 
-Find optimal polynomial for approximating a function on a discrete grid using
-Remez's first algorithm.
+Find the optimal polynomial for approximating a function on a discrete linear
+grid using Remez's first algorithm.
 
 Typical usage:
 
+  from math import tan, pi
+  from first_algorithm import remez_poly
+
   # define the function to be approximated
-  f = np.tan
+  f = tan
   # lower limit on interval
   lower = 0.0
   # upper limit on interval
-  upper = 0.25 * np.pi
+  upper = 0.25 * pi
   # number of grid points in the interval
   num = 51
   # maximum number of iterations
   mit = 10
   # polynomial order
   order = 5
-  # get coefficients of optimal polynomial using the first algorithm
+
+  # calculate the coefficients of optimal polynomial
   coefficients, error, it = remez_poly(f, lower, upper, num, order, mit)
 """
 import numpy as np
@@ -33,13 +37,15 @@ def remez_poly(
 ) -> tuple[np.ndarray, float, int]:
   """ Discrete Remez Algorithm for polynomials
 
-  This is the first Remez algorithm.
+  This is the discrete first Remez algorithm for polynomials. It is used to
+  find the optimal polynomial approximation to a function f on a discrete
+  linear grid.
 
   Args:
-    func: A function (or lambda) f: X -> R.
+    func: A function (or lambda) f: X -> Result.
     start: The starting value of the grid.
     stop: The end value of the grid.
-    num: The number of points on the grid.
+    num: The number of equi-distance points on the grid.
     n_deg: The degree of the approximation polynomial.
     max_iter: The maximum number of iterations.
 
@@ -50,7 +56,7 @@ def remez_poly(
     in the array is: [a0, a1, ..., an], for an nth order polynomial.
   """
 
-  def alternates_column() -> np.ndarray:
+  def alt_col() -> np.ndarray:
     """Generate a column vector with alternating sign integers of magnitude one.
 
     The column will contain n_deg+2 elements. This column is inserted as
@@ -71,7 +77,7 @@ def remez_poly(
     return np.vectorize(lambda i : (-1.0)**(i))(np.arange(n_deg + 2))
 
   def start_points() -> np.ndarray:
-    """Generate an array containing the starting positions for first iteration.
+    """Generate an array containing the starting test positions.
 
     Generate an array containing the starting positions for the first iteration.
     These points are distributed across the grid starting at zero with the last
@@ -105,32 +111,33 @@ def remez_poly(
     return (first < 0.0 and second < 0.0) or (first >= 0.0 and second >=0.0)
 
   # initial error
-  e = 0.0
+  error = 0.0
   # create grid of points
-  s = np.linspace(start, stop, num)
+  grid = np.linspace(start, stop, num)
   # function mapped onto grid
-  f = np.vectorize(func)(s)
+  f = np.vectorize(func)(grid)
   # alternate signs column (n_deg+2 elements)
-  alt = alternates_column()
+  alt = alt_col()
   # starting array of trial points for the first iteration
   u = start_points()
 
   for it in range(max_iter):
     # create square matrix for lhs of linear system
-    v = np.vander(s[u], n_deg + 1, True)
-    a = np.insert(v, n_deg + 1, alt, 1)
+    v = np.vander(grid[u], u.size-1, True)
+    a = np.insert(v, u.size-1, alt, 1)
     # solve linear system ax = b
     x = np.linalg.solve(a, f[u])
     # retrieve polynomial coefficients and error
     p = x[:-1]
-    e_it = abs(x[-1])
+    eiter = abs(x[-1])
     # check this iteration is close to the optimal polynomial
-    if e_it < 1.000000000000001 * e:
-      return (p, e_it, it+1)
-    # save current error
-    e = e_it
+    if eiter < 1.000000000000001 * error:
+      return (p, eiter, it+1)
+    # save current error for next iteration
+    error = eiter
     # calculate the residual error over the grid
-    r_grid = f - np.polynomial.polynomial.polyval(s, p)
+    r_grid = f - np.polynomial.polynomial.polyval(grid, p)
+    # debug_residual(it + 1, s, r_grid, u)
     # get the position of the extreme residual
     pos = np.argmax(np.fabs(r_grid))
     # update the list of trial points to include a point at the extreme
@@ -138,15 +145,14 @@ def remez_poly(
       if not match_sign(r_grid[u[0]], r_grid[pos]):
         u = np.roll(u, 1)
       u[0] = pos
-    elif pos > u[n_deg + 1]:
-      if not match_sign(r_grid[pos], r_grid[u[n_deg + 1]]):
+    elif pos > u[-1]:
+      if not match_sign(r_grid[pos], r_grid[u[-1]]):
         u = np.roll(u, -1)
-      u[n_deg + 1] = pos
+      u[-1] = pos
     else:
-      for i in range(n_deg + 1):
+      for i in range(u.size-1):
         # test if position is in the interval [u[i], u[i+1]]
-        test = u[i] <= pos and pos <= u[i+1]
-        if test:
+        if u[i] <= pos <= u[i+1]:
           if match_sign(r_grid[u[i]], r_grid[pos]):
             u[i] = pos
           else:
