@@ -1,4 +1,4 @@
-""" Test the polynomial approximation for the tan function on a discrete grid.
+""" Test the optimal polynomial approximation for the tan function.
 
 This test case is taken from 'Tchebycheff approximation on a discrete point set:
 algorithms old and new', William Edward McBride, Doctoral Thesis, 1973,
@@ -6,6 +6,12 @@ Problem C, Page 52.
 
 The second algorithm of Remez is used to find the optimal polynomial. The
 accuracy and convergence of the approximation matches that reported by McBride.
+
+Module:
+  second_tan.py
+
+Usage:
+  python second_tan.py
 """
 from math import tan, pi
 from second_algorithm import remez_poly
@@ -34,14 +40,14 @@ def main() -> None:
   print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
+  # plot results
   plot_residual(f, coefficients, lower, upper, num,
     'Residual error for polynomial approximation')
   plot_polynomial(f, coefficients, lower, upper, num,
     'Polynomial approximation for tan function')
-  # display results on screen
   show()
 
 if __name__ == '__main__':
-  print('Best polynomial approximation for tan function')
+  print('Polynomial approximation for tan function')
   main()
   print('Finished.')

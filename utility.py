@@ -1,5 +1,8 @@
 """Some plotting utilities to assist with the development of the minmax module
 
+Module:
+  utility.py
+
 This modules contains the following helper functions:
 
   debug_residual: Plot the residual error on the grid as well as the test

@@ -3,6 +3,9 @@
 Find the optimal polynomial for approximating a function on a discrete linear
 grid using Remez's second algorithm.
 
+Module:
+  second_algorithm.py
+
 Typical usage:
 
   from math import tan, pi
@@ -137,7 +140,7 @@ def remez_poly(
     error = eiter
     # calculate the residual error over the grid
     r_grid = f - np.polynomial.polynomial.polyval(grid, p)
-    # debug_residual(it + 1, s, r_grid, u)
+    # debug_residual(it + 1, grid, r_grid, u)
     # check if need to use first algorithm to handle zero error
     if eiter == 0:
       # get the position of the extreme residual
@@ -210,6 +213,6 @@ def remez_poly(
         update[0] = pos_first
       # save the updated test points for the next iteration
       u = update
-    # debug_residual(it + 1, s, r_grid, u)
+    # debug_residual(it + 1, grid, r_grid, u)
   raise RuntimeWarning('Failed to converge!')
 

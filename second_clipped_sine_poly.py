@@ -1,4 +1,8 @@
-""" Test the polynomial approximation of a clipped sine on a discrete grid.
+""" Test the polynomial approximation for a clipped sine function.
+
+This test uses Remez's second algorithm as implemented in the module
+first_algorithm. A discrete grid over the interval [-pi, pi] with 4096 points is
+used. The polynomial order is set to 17.
 
 The clipped sine is defined by the nested function:
 
@@ -10,13 +14,16 @@ The clipped sine is defined by the nested function:
         y = -0.7071067811865475
       return y
 
-The approximation is for required for the interval [-pi, pi] using an
-polynomial degree of 17. The grid contains 4096 points.
+The algorithm is completed after 11 iterations. The resulting approximation
+has a maximum error of 2.364630e-02.
 
-The second algorithm of Remez is used to find the optimal polynomial. The
-resulting polynomial is not particularly accurate with a peak error of
-2.364630e-02 The algorithm requires 11 iterations to converge to the optimal
-polynomial. In this case the second algorithm is considerablely more efficient.
+Module:
+  second_clipped_sine_poly.py
+
+Usage:
+
+  python second_clipped_sine_poly.py
+
 """
 
 from math import sin, pi
@@ -24,7 +31,7 @@ from second_algorithm import remez_poly
 from utility import plot_residual, plot_polynomial, show
 
 def main() -> None:
-  """Polynomial approximation of clipped on a discrete grid"""
+  """Polynomial approximation of clipped sine on a discrete grid"""
   # The clipped sine function
   def clipped_sine(x : float) -> float:
     y = sin(x)
@@ -51,6 +58,7 @@ def main() -> None:
   print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
+  # plot results
   plot_residual(clipped_sine, coefficients, lower, upper, num,
     'Residual error for polynomial approximation')
   plot_polynomial(clipped_sine, coefficients, lower, upper, num,

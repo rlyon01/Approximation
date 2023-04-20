@@ -1,8 +1,16 @@
-"""Find the optimal polynomial approximation of the sensor conversion.
+"""Test the optimal polynomial approximation for the sensor conversion.
 
-The polynomial approximation is calculated using second algorithm of Remez
-on a discrete grid. A 5th order polynomial is found after 4 iterations. The
-maximum error introduced by the approximation is 9.770320e-01.
+This test uses Remez's second algorithm as implemented in the module
+first_algorithm. The discrete is over the interval [21, 181] with 161 points.
+The polynomial order is 5.
+
+The algorithm complete after 4 iterations and the maximum error is 9.770320e-01.
+
+Module:
+  first_conversion.py
+
+Usage:
+  python first_conversion.py
 """
 
 from convert import calibrated
@@ -29,11 +37,11 @@ def main() -> None:
   print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
+  # plot results
   plot_residual(f, coefficients, lower, upper, num,
     'Residual error for polynomial approximation')
   plot_polynomial(f, coefficients, lower, upper, num,
     'Polynomial approximation for sensor function')
-  # display results on screen
   show()
 
 if __name__ == '__main__':
