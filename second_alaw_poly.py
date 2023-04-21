@@ -9,18 +9,20 @@ has a maximum error of 1.349985e-01. This is not a good approximation, but the
 example is useful for testing the algorithm implementation.
 
 Module:
-  second_alaw_poly.py
+  second_alaw_poly
 
 Usage:
-
-  python second_alaw_poly.py
+  >>> from second_alaw_poly import main
+  >>> main()
 """
+
 from math import log
 from second_algorithm import remez_poly
-from utility import plot_residual, plot_polynomial, show
+from utility import plot_result
 
 def main() -> None:
   """Polynomial approximation of A-LAW conversion."""
+  print('Polynomial approximation of A-LAW conversion')
   def alaw(x: float) -> float:
     abs_x = abs(x)
     if abs_x < 0.011415525114155252:
@@ -45,13 +47,9 @@ def main() -> None:
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
   # plot results
-  plot_residual(alaw, coefficients, lower, upper, num,
-    'Residual error for polynomial approximation')
-  plot_polynomial(alaw, coefficients, lower, upper, num,
-    'Polynomial approximation for alaw function')
-  show()
+  plot_result(alaw, coefficients, lower, upper, num,
+    'Polynomial Approximation of A-LAW conversion')
+  print('Finished.')
 
 if __name__ == '__main__':
-  print('Best polynomial approximation of alaw conversion')
   main()
-  print('Finished.')

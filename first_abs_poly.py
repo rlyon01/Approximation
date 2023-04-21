@@ -12,17 +12,18 @@ algorithm to complete. The approximation calculated by this test is close to
 the results reported by the reference above, but it could be better.
 
 Module:
-  first_abs_poly.py
+  first_abs_poly
 
 Usage:
-
-  python first_abs_poly.py
+  >>> import first_abs_poly
+  >>> main()
 """
 from first_algorithm import remez_poly
-from utility import plot_residual, plot_polynomial, show
+from utility import plot_result
 
 def main() -> None:
-  """Polynomial approximation of abs on a discrete grid"""
+  """Polynomial approximation of ABS function"""
+  print('Polynomial approximation of ABS function')
   # define the function to be approximated
   f = abs
   # lower limit on interval of approximation
@@ -44,13 +45,9 @@ def main() -> None:
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
   # plot results
-  plot_polynomial(f, coefficients, lower, upper, num,
-    'Polynomial approximation for abs function')
-  plot_residual(f, coefficients, lower, upper, num,
-    'Residual error for polynomial approximation')
-  show()
+  plot_result(f, coefficients, lower, upper, num,
+    'Polynomial Approximation of ABS function')
+  print('Finished.')
 
 if __name__ == '__main__':
-  print('Best polynomial approximation for abs function')
   main()
-  print('Finished.')

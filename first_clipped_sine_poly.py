@@ -18,20 +18,20 @@ The algorithm is completed after 55 iterations. The resulting approximation
 has a maximum error of 2.364630e-02.
 
 Module:
-  first_clipped_sine_poly.py
+  first_clipped_sine_poly
 
 Usage:
-
-  python first_clipped_sine_poly.py
-
+  >>> from first_clipped_sine_poly import main
+  >>> main()
 """
 
 from math import sin, pi
 from first_algorithm import remez_poly
-from utility import plot_residual, plot_polynomial, show
+from utility import plot_result
 
 def main() -> None:
-  """Polynomial approximation of clipped sine on a discrete grid"""
+  """Polynomial approximation of Clipped-Sine function"""
+  print('Polynomial approximation of Clipped-Sine function')
   # The clipped sine function
   def clipped_sine(x : float) -> float:
     y = sin(x)
@@ -40,7 +40,7 @@ def main() -> None:
     elif y < -0.7071067811865475:
       y = -0.7071067811865475
     return y
-  
+
   # lower limit on interval of approximation
   lower = -pi
   # upper limit on interval of approximation
@@ -59,13 +59,10 @@ def main() -> None:
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
   # plot results
-  plot_residual(clipped_sine, coefficients, lower, upper, num,
-    'Residual error for polynomial approximation')
-  plot_polynomial(clipped_sine, coefficients, lower, upper, num,
-    'Polynomial approximation for clipped-sine function')
-  show()
+  plot_result(clipped_sine, coefficients, lower, upper, num,
+    'Polynomial Approximation of Clipped-Sine function')
+  print('Finished.')
 
 if __name__ == '__main__':
-  print('Best polynomial approximation for clipped sine function')
   main()
-  print('Finished.')
+

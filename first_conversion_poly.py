@@ -7,18 +7,20 @@ The polynomial order is 5.
 The algorithm complete after 8 iterations and the maximum error is 9.770320e-01.
 
 Module:
-  first_conversion.py
+  first_conversion
 
 Usage:
-  python first_conversion.py
+  >>> from first_conversion import main
+  >>> main()
 """
 
 from convert import calibrated
 from first_algorithm import remez_poly
-from utility import plot_residual, plot_polynomial, show
+from utility import plot_result
 
 def main() -> None:
-  """Polynomial approximation of sensor conversion."""
+  """Polynomial approximation of SENSOR conversion."""
+  print('Polynomial approximation of SENSOR conversion')
   # define the function to be approximated
   f = lambda x : calibrated(round(x))
   # lower limit on interval of approximation
@@ -38,13 +40,10 @@ def main() -> None:
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
   # plot results
-  plot_residual(f, coefficients, lower, upper, num,
-    'Residual error for polynomial approximation')
-  plot_polynomial(f, coefficients, lower, upper, num,
-    'Polynomial approximation for sensor function')
-  show()
+  plot_result(f, coefficients, lower, upper, num,
+    'Polynomial Approximation of SENSOR conversion')
+  print('Finished.')
 
 if __name__ == '__main__':
-  print('Best polynomial approximation of sensor conversion')
   main()
-  print('Finished.')
+

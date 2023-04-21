@@ -8,17 +8,20 @@ The first algorithm of Remez is used to find the optimal polynomial. The
 accuracy and convergence of the approximation matches that reported by McBride.
 
 Module:
-  first_tan.py
+  first_tan_poly
 
 Usage:
-  python first_tan.py
+  >>> first_tan_poly import main
+  >>> main()
 """
+
 from math import tan, pi
 from first_algorithm import remez_poly
-from utility import plot_residual, plot_polynomial, show
+from utility import plot_result
 
 def main() -> None:
-  """Polynomial approximation of tan function"""
+  """Polynomial approximation of TAN function"""
+  print('Polynomial approximation of TAN function')
   # define the function to be approximated
   f = tan
   # lower limit on interval of approximation
@@ -40,13 +43,9 @@ def main() -> None:
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
   # plot the results
-  plot_residual(f, coefficients, lower, upper, num,
-    'Residual error for polynomial approximation')
-  plot_polynomial(f, coefficients, lower, upper, num,
-    'Polynomial approximation for tan function')
-  show()
+  plot_result(f, coefficients, lower, upper, num,
+    'Polynomial Approximation of TAN function')
+  print('Finished.')
 
 if __name__ == '__main__':
-  print('Best polynomial approximation for tan function')
   main()
-  print('Finished.')
