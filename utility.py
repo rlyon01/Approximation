@@ -19,6 +19,7 @@ This modules contains the following helper functions:
   show and close.
 """
 import numpy as np
+from platform import system
 import matplotlib.pyplot as pp
 
 def debug_residual(
@@ -138,4 +139,83 @@ def plot_polynomial(
 def show() -> None:
   """ Display plots and block until the user has closed all figures."""
   pp.show(block=True)
-  return
+
+def plot_maximize() -> None:
+  """Maximize the plot window on the display"""
+  backend = pp.get_backend()
+  cfm = pp.get_current_fig_manager()
+  if backend == 'wxAgg':
+    cfm.frame.Maximize(True)
+  elif backend == 'TkAgg':
+    if system() == 'Windows':
+      cfm.window.state('zoomed')
+    else:
+      cfm.resize(*cfm.window.maxsize())
+  elif backend == 'QT4Agg':
+    cfm.window.showMaximized()
+  elif callable(getattr(cfm, 'full_screen_toggle', None)):
+    if not getattr(cfm, 'flag_is_max', None):
+      cfm.full_screen_toggle()
+      cfm.flag_is_max = True
+  else:
+    raise RuntimeError('plt_maximize() is not implemented for current backend:',
+      backend)
+
+def plot_result(
+  func,
+  coeffs: np.ndarray,
+  start: float,
+  stop: float,
+  num: int,
+  title: str = None,
+) -> None:
+  """Plot and display the polynomial approximation results
+
+  This function generates a window containing two vertically stacked graphs.
+  The top graph contains plots of the polynomial approximation and the
+  function. The bottom graph is a plot of the residual error. This function will
+  block until the user closes the window.
+
+  Arg:
+    func: A function (or lambda) f: X -> Result.
+    coeffs: Array of the polynomial coeffcients.
+    start: The starting value of the grid.
+    stop: The end value of the grid.
+    num: The number of points on the grid.
+    title: Optional title string to appear on the window titlebar.
+
+  Returns:
+    none
+  """
+  # construct the grid
+  grid = np.linspace(start, stop, num)
+  # function mapped onto grid
+  f_grid = np.vectorize(func)(grid)
+  # polynomial mapped over grid
+  p_grid = np.polynomial.polynomial.polyval(grid, coeffs)
+  # residual error mapped over grid
+  r_grid = f_grid - np.polynomial.polynomial.polyval(grid, coeffs)
+  # create a window with two plots, (polynomial and residual error)
+  _, (ax1, ax2) = pp.subplots(2, 1, constrained_layout=True)
+  # plot polynomial and function on top graph
+  ax1.set_title('Polynomial Approximation')
+  ax1.plot(grid, f_grid, color='red', label='Function')
+  ax1.plot(grid, p_grid, color='blue', label='Polynomial')
+  ax1.set_xlabel('x')
+  ax1.set_ylabel('y')
+  ax1.grid(True)
+  ax1.legend()
+  # plot the residual error on bottom graph
+  ax2.set_title('Residual Error')
+  ax2.plot(grid, r_grid, color='green')
+  ax2.set_xlabel('x')
+  ax2.set_ylabel('Error')
+  ax2.grid(True)
+  # display optional window title
+  if title is not None:
+    pp.get_current_fig_manager().set_window_title(title)
+  # window maximized
+  # plot_maximize()
+  # display plots
+  pp.show()
+  pp.close()
