@@ -93,6 +93,20 @@ Matplotlib 3.3.4 packages. Later package versions should cause no issue.
     </tr>
 <table>
 
+## Results
+
+### `abs` Function
+
+```
+Polynomial approximation of ABS function
+Coefficients: [2.791249516087373e-02, -9.840281293753858e-15, 4.751255548115536e+00, 7.426477170369968e-14, -2.062873910856450e+01, 2.232263841190505e-14, 4.772834599399463e+01, -7.052582472977443e-13, -4.953971350946165e+01, 1.124328697465918e-12, 1.868874694996265e+01, -5.058175789900250e-13]
+Error: 2.780837e-02
+Iterations: 5
+```
+
+![Polynomial approximation of abs function][abs_test_first]
+
+
 ## References
 
 1. <a name="Ref1"></a> Philip C. Curtis and Werner L. Frank. 1958. An algorithm
@@ -106,3 +120,6 @@ See: <https://doi.org/10.1145/610937.610959>
 for the Determination of the Polynomial of Best Minimax Approximation to a
 Function Defined on a Finite Point Set. J. ACM 6, 3 (July 1959), 395–404.
 See: <https://doi.org/10.1145/320986.320994>
+
+
+[abs_test_first]: ./images/Polynomial_Approximation_of_ABS_function.svg
