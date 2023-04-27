@@ -4,7 +4,7 @@ Find the optimal polynomial for approximating a function on a discrete linear
 grid using Remez's first algorithm.
 
 Module:
-  first_algorithm.py
+  remes_first_algorithm.py
 
 Typical usage:
 
