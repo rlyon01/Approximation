@@ -1,8 +1,8 @@
 """Test the polynomial approximation for the alaw function.
 
 This test uses Remez's second algorithm as implemented in the module
-first_algorithm. A discrete grid over the interval [-1, +1] with 2048 points is
-used. The polynomial order is set to 15.
+remes_first_algorithm. A discrete grid over the interval [-1, +1] with 2048
+points is used. The polynomial order is set to 15.
 
 The algorithm is completed after 7 iterations. The resulting approximation
 has a maximum error of 1.349985e-01. This is not a good approximation, but the
@@ -16,36 +16,36 @@ Usage:
   >>> main()
 """
 
+from time import process_time
 from math import log
-from second_algorithm import remez_poly
+from remes_second_algorithm import remez_poly
 from utility import plot_result
 
 def main() -> None:
   """Polynomial approximation of A-LAW conversion."""
   print('Polynomial approximation of A-LAW conversion')
   def alaw(x: float) -> float:
+    """A-LAW Conversion function"""
     abs_x = abs(x)
     if abs_x < 0.011415525114155252:
       y = 16.006487384190198 * abs_x
     else:
       y = 0.1827224587236324 * (1.0 + log(87.6*abs_x))
     return y if x >= 0.0 else -y
-  # lower limit on interval of approximation
-  lower = -1.0
-  # upper limit on interval of approximation
-  upper = +1.0
-  # number of grid points in the interval
-  num = 2048
-  # maximum number of iterations
-  mit = 10
-  # polynomial order
-  order = 15
+  lower = -1.0    # lower limit on interval of approximation
+  upper = +1.0    # upper limit on interval of approximation
+  num = 2048      # number of grid points in the interval
+  mit = 10        # maximum number of iterations
+  order = 15      # polynomial order
   # calculate the best approximation on grid
+  start_time = process_time()
   coefficients, error, it = remez_poly(alaw, lower, upper, num, order, mit)
+  end_time = process_time()
   # display the results
   print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
   print(f'Error: {error:.6e}')
   print(f'Iterations: {it}')
+  print(f'Duration: {end_time-start_time:.4f}')
   # plot results
   plot_result(alaw, coefficients, lower, upper, num,
     'Polynomial Approximation of A-LAW conversion')
