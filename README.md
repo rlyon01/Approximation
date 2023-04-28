@@ -1,19 +1,39 @@
 # Chebyshev Approximation of a Function on a Linear Finite Grid.
 
-The python files in this repository are simple naive implementations of Remes's
-first and second algorithms for finding a polynomial of best approximation to
-a function on a discrete finite linear grid. The purpose is to investigate the
-limitations and issues when implementing Remes's algorithms in the most
-straight-forward concise manner. A number of test cases are included.
+The Python files in this repository implementations of the first and second
+algorithms of Remes. The algorithms may be used for finding a polynomial of best
+approximation to a function. The purpose is to investigate the limitations and
+issues when implementing the algorithms in the most straight-forward concise
+manner. A number of test cases are included.
 
-The algorithms are implemented in python and roughly follow the approach of
-Curtis and Frank [\[1\]](#Ref1)[\[2\]](#Ref2). These references contain a number
-ambiguities, perhaps reflecting their age. So it required some experimentation
-and thought to implement working algorithms.
+The algorithms consist of the following steps:
+
+1. Select a starting set of test points
+2. Calculate the test polynomial for best approximation
+3. Check if the calculation is complete and to stop.
+4. Calculate the residual error
+5. Update the set of test points and go back to step 2.
+
+For the first algorithm only a single test point is updated at step 5. Whereas
+with the second algorithm it is possible for all test points to be updated
+at step 5.
+
+The algorithms are applied over a real interval [a, b]. To simplify the
+implementation, the real interval is a discrete linear grid of points arranged
+in ascending order. The test points are selected from the grid and the residual error is only calculated at the grid points.
+
+A test polynomial is calculated by constructing a linear system, which is
+solved using the standard numpy LDU solver.
+
+At each grid point the residual error is the difference between the function
+and polynomial evaluations. The numpy polynomial evaluation is used which is
+based Horner's rule.
+
+The standard Python float type is used for all calculations.
 
 ## Dependencies
 
-The code was written in Python and assumes that version 3.9 or later
+The code is written in Python and assumes that version 3.9 or later
 is installed on the computer. The code utilises the NumPy 1.19.5 and
 Matplotlib 3.3.4 packages. Later package versions should cause no issue.
 
@@ -34,7 +54,7 @@ Matplotlib 3.3.4 packages. Later package versions should cause no issue.
     </tr>
     <tr>
         <td>utiliy.py</td>
-        <td>Some functions to plot results.</td>
+        <td>Some functions to plot results with Matplotlib.</td>
     </tr>
     <tr>
         <td>convert.py</td>
@@ -95,31 +115,3 @@ Matplotlib 3.3.4 packages. Later package versions should cause no issue.
 
 ## Results
 
-### `abs` Function
-
-```
-Polynomial approximation of ABS function
-Coefficients: [2.791249516087373e-02, -9.840281293753858e-15, 4.751255548115536e+00, 7.426477170369968e-14, -2.062873910856450e+01, 2.232263841190505e-14, 4.772834599399463e+01, -7.052582472977443e-13, -4.953971350946165e+01, 1.124328697465918e-12, 1.868874694996265e+01, -5.058175789900250e-13]
-Error: 2.780837e-02
-Iterations: 5
-```
-
-![Polynomial approximation of abs function][abs_test_first]
-
-
-## References
-
-1. <a name="Ref1"></a> Philip C. Curtis and Werner L. Frank. 1958. An algorithm
-for the determination of the polynomial of best minimax approximation to a
-function defined on a finite point set. In Preprints of papers presented at the
-13th national meeting of the Association for Computing Machinery (ACM '58).
-Association for Computing Machinery, New York, NY, USA, 1–3.
-See: <https://doi.org/10.1145/610937.610959>
-
-2. <a name="Ref2"></a> Philip C. Curtis and Werner L. Frank. 1959. An Algorithm
-for the Determination of the Polynomial of Best Minimax Approximation to a
-Function Defined on a Finite Point Set. J. ACM 6, 3 (July 1959), 395–404.
-See: <https://doi.org/10.1145/320986.320994>
-
-
-[abs_test_first]: ./images/Polynomial_Approximation_of_ABS_function.svg
