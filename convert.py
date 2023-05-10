@@ -32,16 +32,19 @@ CONVERSION_TABLE: list[int] = [
 ]
 
 def calibrated(raw: int) -> int:
-    """Convert raw sensor reading to a calibrated value
-    Args:
-        raw: The raw value read from the sensor. This must have a integer
-        value in the range of 21 to 181, inclusive.
-    Returns:
-        The calibrate value, represented as an integer.
-    Raises:
-        ValueError: The raw argument does not lie in the range of 21 to 181,
-        inclusive.
-    """
-    if raw < 21 or raw > 181: raise ValueError('Invalid raw argument')
-    return CONVERSION_TABLE[raw - 21]
+  """Convert raw sensor reading to a calibrated value
+
+  Args:
+    raw: The raw value read from the sensor. This must have a integer
+    value in the range of 21 to 181, inclusive.
+
+  Returns:
+    The calibrate value, represented as an integer.
+
+  Raises:
+    ValueError: The raw argument does not lie in the range of 21 to 181,
+    inclusive.
+  """
+  if raw < 21 or raw > 181: raise ValueError('Invalid raw argument')
+  return CONVERSION_TABLE[raw - 21]
 
