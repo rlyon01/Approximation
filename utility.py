@@ -43,7 +43,7 @@ def debug_residual(
   Returns:
     None.
   """
-  pp.figure('Iteration {0}'.format(iteration))
+  pp.figure(f'Iteration {iteration}')
   # plot the residual error with line graph
   pp.plot(grid, residual, color='blue')
   # highlight the test points with buttons
@@ -194,7 +194,7 @@ def plot_result(
   # polynomial mapped over grid
   p_grid = np.polynomial.polynomial.polyval(grid, coeffs)
   # residual error mapped over grid
-  r_grid = f_grid - np.polynomial.polynomial.polyval(grid, coeffs)
+  r_grid = f_grid - p_grid
   # create a window with two plots, (polynomial and residual error)
   _, (ax1, ax2) = pp.subplots(2, 1, constrained_layout=True)
   # plot polynomial and function on top graph
