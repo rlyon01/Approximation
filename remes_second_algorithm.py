@@ -10,7 +10,7 @@ Typical usage:
 
   from math import tan, pi
   from second_algorithm import remez_poly
-  
+
   f = tan             # define the function to be approximated
   lower = 0.0         # lower limit on interval
   upper = 0.25 * pi   # upper limit on interval
@@ -105,13 +105,13 @@ def remez_poly(
     return lo + (np.argmin if r[mi] < 0.0 else np.argmax)(r[lo : hi])
 
   # error scaling used to check for algorithm termination
-  scale = 1.0 + 10.0*np.spacing(1.0)
-  # initial error
-  err = 0.0
+  scale =  1.0 + 4.55*np.spacing(1.0)
+  # initial level error
+  saved_level_error = 0.0
   # create grid of points
   grid = np.linspace(start, stop, num)
   # function mapped onto grid
-  f = np.vectorize(func)(grid)
+  f_grid = np.vectorize(func)(grid)
   # alternate signs array
   sigma = np.power(-1.0, range(ndeg+2))
   # initial array of trial points
@@ -121,84 +121,62 @@ def remez_poly(
     # solve trial polynomial for given trial points
     v = np.vander(grid[trial], trial.size-1, True)
     a = np.insert(v, trial.size-1, sigma, 1)
-    x = np.linalg.solve(a, f[trial])
+    x = np.linalg.solve(a, f_grid[trial])
     # retrieve polynomial coefficients
     p = x[:-1]
-    # retrieve residual error at trial points
-    eiter = abs(x[-1])
-    # check this iteration is close to the optimal polynomial
-    if eiter < scale * err:
-      return (p, eiter, it+1)
-    # save current error for next iteration
-    err = eiter
+    # retrieve magnitude of the residual error at trial points
+    level_error = abs(x[-1])
     # calculate the residual error over the grid
-    r_grid = f - np.polynomial.polynomial.polyval(grid, p)
-    # check if need to use first algorithm to handle zero error case
-    if eiter == 0:
-      # get the position of the extreme residual
-      pos = np.argmax(np.fabs(r_grid))
-      # update the list of trial points to include the extreme point
-      if pos < trial[0]:
-        if not is_same_sign(r_grid[trial[0]], r_grid[pos]):
-          trial = np.roll(trial, 1)
-        trial[0] = pos
-      elif pos > trial[-1]:
-        if not is_same_sign(r_grid[pos], r_grid[trial[-1]]):
-          trial = np.roll(trial, -1)
-        trial[-1] = pos
-      else:
-        for i in range(trial.size-1):
-          # test if position is in the interval [u[i], u[i+1]]
-          if trial[i] <= pos <= trial[i+1]:
-            if is_same_sign(r_grid[trial[i]], r_grid[pos]):
-              trial[i] = pos
-            else:
-              trial[i+1] = pos
-            break
-    else:
-      # remez second algorithm
-      trial_update = np.empty_like(trial)
-      # exchange first leftmost test point
-      trial_update[0] = exchange(r_grid, 0, trial[0], trial[1])
-      # exchange intermediate test points
-      for i in range(1, trial.size-1):
-        trial_update[i] = exchange(r_grid, max(trial_update[i-1], trial[i-1])+1,
-          trial[i], trial[i+1])
-      # exchange last rightmost test point
-      trial_update[-1] = exchange(r_grid, max(trial_update[-2], trial[-2])+1,
-        trial[-1], num)
+    r_grid = f_grid - np.polynomial.polynomial.polyval(grid, p)
+    # check this if iteration is close to the optimal polynomial
+    if level_error < scale*saved_level_error:
+      max_residual = np.amax(np.fabs(r_grid))
+      return (p, max_residual, it+1)
+    # save residual error for next iteration
+    saved_level_error = level_error
+    # update trial points using multiple exchange
+    trial_update = np.empty_like(trial)
+    # exchange first leftmost test point
+    trial_update[0] = exchange(r_grid, 0, trial[0], trial[1])
+    # exchange intermediate test points
+    for i in range(1, trial.size-1):
+      trial_update[i] = exchange(r_grid, max(trial_update[i-1], trial[i-1])+1,
+        trial[i], trial[i+1])
+    # exchange last rightmost test point
+    trial_update[-1] = exchange(r_grid, max(trial_update[-2], trial[-2])+1,
+      trial[-1], num)
 
-      # attempt to find an extrema residual to the left of the first test point
-      first_pos = min(trial_update[0], trial[0])
-      first_mag = 0.0
-      if first_pos > 0:
-        first_pos = np.argmax(np.fabs(r_grid[0 : first_pos]))
-        if not is_same_sign(r_grid[first_pos], r_grid[trial_update[0]]):
-          mag = np.fabs(r_grid[first_pos])
-          if mag > np.fabs(r_grid[trial_update[-1]]):
-            first_mag = mag
-      # attempt to find an extrema residual to the right of the last test point
-      last_pos = max(trial_update[-1], trial[-1]) + 1
-      last_mag = 0.0
-      if last_pos < num:
-        last_pos += np.argmax(np.fabs(r_grid[last_pos : num]))
-        if not is_same_sign(r_grid[last_pos], r_grid[trial_update[-1]]):
-          mag = np.fabs(r_grid[last_pos])
-          if first_mag == 0.0:
-            if mag > np.fabs(r_grid[trial_update[0]]):
-              last_mag = mag
-          elif mag > first_mag:
+    # attempt to find an extrema residual to the left of the first test point
+    first_pos = min(trial_update[0], trial[0])
+    first_mag = 0.0
+    if first_pos > 0:
+      first_pos = np.argmax(np.fabs(r_grid[0 : first_pos]))
+      if not is_same_sign(r_grid[first_pos], r_grid[trial_update[0]]):
+        mag = np.fabs(r_grid[first_pos])
+        if mag > np.fabs(r_grid[trial_update[-1]]):
+          first_mag = mag
+    # attempt to find an extrema residual to the right of the last test point
+    last_pos = max(trial_update[-1], trial[-1]) + 1
+    last_mag = 0.0
+    if last_pos < num:
+      last_pos += np.argmax(np.fabs(r_grid[last_pos : num]))
+      if not is_same_sign(r_grid[last_pos], r_grid[trial_update[-1]]):
+        mag = np.fabs(r_grid[last_pos])
+        if first_mag == 0.0:
+          if mag > np.fabs(r_grid[trial_update[0]]):
             last_mag = mag
-      # if there is an additional extreme point insert it into the test points
-      if last_mag > 0.0:
-        # add new point to the right and delete the leftmost point
-        trial_update = np.roll(trial_update, -1)
-        trial_update[-1] = last_pos
-      elif first_mag > 0.0:
-        # add new point to the left and delete the rightmost point
-        trial_update = np.roll(trial_update, 1)
-        trial_update[0] = first_pos
-      # save the updated test points for the next iteration
-      trial = trial_update
+        elif mag > first_mag:
+          last_mag = mag
+    # if there is an additional extreme point insert it into the test points
+    if last_mag > 0.0:
+      # add new point to the right and delete the leftmost point
+      trial_update = np.roll(trial_update, -1)
+      trial_update[-1] = last_pos
+    elif first_mag > 0.0:
+      # add new point to the left and delete the rightmost point
+      trial_update = np.roll(trial_update, 1)
+      trial_update[0] = first_pos
+    # save the updated test points for the next iteration
+    trial = trial_update
   raise RuntimeWarning('Failed to converge!')
 

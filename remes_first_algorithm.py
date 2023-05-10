@@ -10,7 +10,7 @@ Typical usage:
 
   from math import tan, pi
   from remes_first_algorithm import remez_poly
-  
+
   f = tan           # define the function
   lower = 0.0       # lower limit on interval
   upper = 0.25*pi   # upper limit on interval
@@ -46,9 +46,9 @@ def remez_poly(
 
   Returns:
     A tuple containing an array of the polynomial coefficients, a float
-    which is the error of approximation and an integer which is the number
-    of iterations required. The ordering of the coefficients
-    in the array is: [a0, a1, ..., an], for an nth order polynomial.
+    which is the maximum error of approximation and an integer which is the
+    number of iterations required. The ordering of the coefficients in the
+    array is: [a0, a1, ..., an], for an nth order polynomial.
   """
 
   # nested functions
@@ -85,11 +85,11 @@ def remez_poly(
       the same sign, otherwise False is returned.
     """
     return (first<0.0 and second<0.0) or (first >= 0.0 and second >=0.0)
-  
+
   # error scaling used to check for algorithm termination
-  scale = 1.0 + 10.0*np.spacing(1.0)
-  # initial error
-  err = 0.0
+  scale = 1.0 + 4.55*np.spacing(1.0)
+  # initial level error
+  saved_level_error = 0.0
   # create grid of points
   grid = np.linspace(start, stop, num)
   # function mapped onto grid
@@ -107,14 +107,16 @@ def remez_poly(
     # retrieve polynomial coefficients
     p = x[:-1]
     # retrieve residual error at trial points
-    eiter = abs(x[-1])
-    # check this if iteration is close to the optimal polynomial
-    if eiter < scale * err:
-      return (p, eiter, it+1)
-    # save residual error for next iteration
-    err = eiter
+    level_error = abs(x[-1])
     # calculate the residual error over the grid
     r_grid = f_grid - np.polynomial.polynomial.polyval(grid, p)
+    # check this if iteration is close to the optimal polynomial
+    if level_error < scale*saved_level_error:
+      max_residual = np.amax(np.fabs(r_grid))
+      return (p, max_residual, it+1)
+    # save residual error for next iteration
+    saved_level_error = level_error
+    # identify the grid point at the greatest residual magnitude
     point = np.argmax(np.fabs(r_grid))
     # update the array of trial points to include the extreme point
     if point < trial[0]:
