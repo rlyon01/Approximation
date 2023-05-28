@@ -68,7 +68,7 @@ def remez_poly(
     Returns:
       An array containing the starting test points in ascending order.
     """
-    pts = np.round(0.5*(ngrid-1)*(1.0+np.polynomial.chebyshev.chebpts2(npts)))
+    pts = np.round(0.5*(ngrid-1)*(1.0+np.polynomial.chebyshev.chebpts2(npts))) # type: ignore
     return pts.astype(int)
 
   def is_same_sign(first: float, second: float) -> bool:
@@ -105,7 +105,7 @@ def remez_poly(
     return lo + (np.argmin if r[mi] < 0.0 else np.argmax)(r[lo : hi])
 
   # error scaling used to check for algorithm termination
-  scale =  1.0 + 4.55*np.spacing(1.0)
+  scale =  1.0 + 4.55*np.spacing(1.0) # type: ignore
   # initial level error
   saved_level_error = 0.0
   # create grid of points
@@ -113,15 +113,15 @@ def remez_poly(
   # function mapped onto grid
   f_grid = np.vectorize(func)(grid)
   # alternate signs array
-  sigma = np.power(-1.0, range(ndeg+2))
+  sigma = np.power(-1.0, range(ndeg+2)) # type: ignore
   # initial array of trial points
   trial = chebpts(ndeg+2, num)
 
   for it in range(max_iter):
     # solve trial polynomial for given trial points
-    v = np.vander(grid[trial], trial.size-1, True)
-    a = np.insert(v, trial.size-1, sigma, 1)
-    x = np.linalg.solve(a, f_grid[trial])
+    v = np.vander(grid[trial], trial.size-1, True) # type: ignore
+    a = np.insert(v, trial.size-1, sigma, 1) # type: ignore
+    x = np.linalg.solve(a, f_grid[trial]) # type: ignore
     # retrieve polynomial coefficients
     p = x[:-1]
     # retrieve magnitude of the residual error at trial points
@@ -130,21 +130,21 @@ def remez_poly(
     r_grid = f_grid - np.polynomial.polynomial.polyval(grid, p)
     # check this if iteration is close to the optimal polynomial
     if level_error < scale*saved_level_error:
-      max_residual = np.amax(np.fabs(r_grid))
+      max_residual = np.amax(np.fabs(r_grid)) # type: ignore
       return (p, max_residual, it+1)
     # save residual error for next iteration
     saved_level_error = level_error
     # update trial points using multiple exchange
     trial_update = np.empty_like(trial)
     # exchange first leftmost test point
-    trial_update[0] = exchange(r_grid, 0, trial[0], trial[1])
+    trial_update[0] = exchange(r_grid, 0, trial[0], trial[1]) # type: ignore
     # exchange intermediate test points
-    for i in range(1, trial.size-1):
-      trial_update[i] = exchange(r_grid, max(trial_update[i-1], trial[i-1])+1,
-        trial[i], trial[i+1])
+    for i in range(1, trial.size-1): # type: ignore
+      trial_update[i] = exchange(r_grid, max(trial_update[i-1], trial[i-1])+1, # type: ignore
+        trial[i], trial[i+1]) # type: ignore
     # exchange last rightmost test point
-    trial_update[-1] = exchange(r_grid, max(trial_update[-2], trial[-2])+1,
-      trial[-1], num)
+    trial_update[-1] = exchange(r_grid, max(trial_update[-2], trial[-2])+1, # type: ignore
+      trial[-1], num) # type: ignore
 
     # attempt to find an extrema residual to the left of the first test point
     first_pos = min(trial_update[0], trial[0])
