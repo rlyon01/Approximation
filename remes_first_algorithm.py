@@ -67,7 +67,7 @@ def remez_poly(
     Returns:
       An array containing the starting test points in ascending order.
     """
-    pts = np.round(0.5*(ngrid-1)*(1.0+np.polynomial.chebyshev.chebpts2(npts)))
+    pts = np.round(0.5*(ngrid-1)*(1.0+np.polynomial.chebyshev.chebpts2(npts))) # type: ignore
     return pts.astype(int)
 
   def is_same_sign(first: float, second: float) -> bool:
@@ -87,7 +87,7 @@ def remez_poly(
     return (first<0.0 and second<0.0) or (first >= 0.0 and second >=0.0)
 
   # error scaling used to check for algorithm termination
-  scale = 1.0 + 4.55*np.spacing(1.0)
+  scale = 1.0 + 4.55*np.spacing(1.0) # type: ignore
   # initial level error
   saved_level_error = 0.0
   # create grid of points
@@ -95,15 +95,15 @@ def remez_poly(
   # function mapped onto grid
   f_grid = np.vectorize(func)(grid)
   # alternate signs array
-  sigma = np.power(-1.0, range(ndeg+2))
+  sigma = np.power(-1.0, range(ndeg+2)) # type: ignore
   # initial array of trial points
   trial = chebpts(ndeg+2, num)
 
   for it in range(max_iter):
     # solve trial polynomial for given trial points
-    v = np.vander(grid[trial], trial.size-1, True)
-    a = np.insert(v, trial.size-1, sigma, 1)
-    x = np.linalg.solve(a, f_grid[trial])
+    v = np.vander(grid[trial], trial.size-1, True) # type: ignore
+    a = np.insert(v, trial.size-1, sigma, 1) # type: ignore
+    x = np.linalg.solve(a, f_grid[trial]) # type: ignore
     # retrieve polynomial coefficients
     p = x[:-1]
     # retrieve residual error at trial points
@@ -112,28 +112,28 @@ def remez_poly(
     r_grid = f_grid - np.polynomial.polynomial.polyval(grid, p)
     # check this if iteration is close to the optimal polynomial
     if level_error < scale*saved_level_error:
-      max_residual = np.amax(np.fabs(r_grid))
+      max_residual = np.amax(np.fabs(r_grid)) # type: ignore
       return (p, max_residual, it+1)
     # save residual error for next iteration
     saved_level_error = level_error
     # identify the grid point at the greatest residual magnitude
-    point = np.argmax(np.fabs(r_grid))
+    point = np.argmax(np.fabs(r_grid)) # type: ignore
     # update the array of trial points to include the extreme point
     if point < trial[0]:
       if not is_same_sign(r_grid[trial[0]], r_grid[point]):
         trial = np.roll(trial, 1)
-      trial[0] = point
+      trial[0] = point # type: ignore
     elif point > trial[-1]:
       if not is_same_sign(r_grid[point], r_grid[trial[-1]]):
         trial = np.roll(trial, -1)
-      trial[-1] = point
+      trial[-1] = point # type: ignore
     else:
-      for i in range(trial.size-1):
+      for i in range(trial.size-1): # type: ignore
         # test if point is in the interval [u[i], u[i+1]]
         if trial[i]<=point<=trial[i+1]:
           if is_same_sign(r_grid[trial[i]], r_grid[point]):
-            trial[i] = point
+            trial[i] = point # type: ignore
           else:
-            trial[i+1] = point
+            trial[i+1] = point # type: ignore
           break
   raise RuntimeWarning('Failed to converge!')
