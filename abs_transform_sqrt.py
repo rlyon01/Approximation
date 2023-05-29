@@ -43,7 +43,7 @@ def main() -> None:
   sqrt_coeffs, error, it = remez_poly(sqrt, lower, upper, num, order, mit)
   # transform coefficients by substitution (x -> x*x)
   abs_coeffs = [0.0]*(2*order+1)
-  for (i, coeff) in enumerate(sqrt_coeffs):
+  for (i, coeff) in enumerate(sqrt_coeffs): # type: ignore
     abs_coeffs[2*i] = coeff
   # stop the timekeeping
   end_time = thread_time_ns()
@@ -55,7 +55,7 @@ def main() -> None:
   print(f'Iterations: {it}')
   print(f'Duration: {duration:.4f} sec')
   # plot results using matplotlib
-  plot_result(abs, abs_coeffs, -upper, upper, 2*num-1,
+  plot_result(abs, abs_coeffs, -upper, upper, 2*num-1, # type: ignore
     'Polynomial Approximation of ABS function')
   print('Finished.')
 
