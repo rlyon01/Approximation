@@ -41,7 +41,7 @@ def main() -> None:
   end_time = process_time()
   # display the results
   print(f'Order: {order}')
-  print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]")
+  print(f"Coefficients: [{', '.join([f'{c:.15e}' for c in coefficients])}]") # type: ignore
   print(f'Error: {error:.15e}')
   print(f'Iterations: {it}')
   print(f'Duration: {end_time-start_time:.4f} sec')
