@@ -57,11 +57,11 @@ def debug_residual(
 
 def plot_residual(
   func,
-  coeffs: np.array,
+  coeffs: np.ndarray,
   start: float,
   stop: float,
   num: int,
-  title: str = None,
+  title: str = str(),
 ) -> None:
   """Plot the residual error on the grid for a given polynomial and function.
 
@@ -91,7 +91,7 @@ def plot_residual(
   pp.xlabel('x')
   pp.ylabel('Error')
   pp.grid(True)
-  if title is not None:
+  if len(title) > 0:
     pp.title(title)
 
 def plot_polynomial(
@@ -100,7 +100,7 @@ def plot_polynomial(
   start: float,
   stop: float,
   num: int,
-  title: str = None,
+  title: str = str(),
 ) -> None:
   """Plot the polynomial and function on the grid
 
@@ -132,7 +132,7 @@ def plot_polynomial(
   pp.xlabel('x')
   pp.ylabel('y')
   pp.grid(True)
-  if title is not None:
+  if len(title) > 0:
     pp.title(title)
   pp.legend()
 
@@ -140,34 +140,13 @@ def show() -> None:
   """ Display plots and block until the user has closed all figures."""
   pp.show(block=True)
 
-def plot_maximize() -> None:
-  """Maximize the plot window on the display"""
-  backend = pp.get_backend()
-  cfm = pp.get_current_fig_manager()
-  if backend == 'wxAgg':
-    cfm.frame.Maximize(True)
-  elif backend == 'TkAgg':
-    if system() == 'Windows':
-      cfm.window.state('zoomed')
-    else:
-      cfm.resize(*cfm.window.maxsize())
-  elif backend == 'QT4Agg':
-    cfm.window.showMaximized()
-  elif callable(getattr(cfm, 'full_screen_toggle', None)):
-    if not getattr(cfm, 'flag_is_max', None):
-      cfm.full_screen_toggle()
-      cfm.flag_is_max = True
-  else:
-    raise RuntimeError('plt_maximize() is not implemented for current backend:',
-      backend)
-
 def plot_result(
   func,
   coeffs: np.ndarray,
   start: float,
   stop: float,
   num: int,
-  title: str = None,
+  title: str = str(),
 ) -> None:
   """Plot and display the polynomial approximation results
 
@@ -196,7 +175,7 @@ def plot_result(
   # residual error mapped over grid
   r_grid = f_grid - p_grid
   # create a window with two plots, (polynomial and residual error)
-  _, (ax1, ax2) = pp.subplots(2, 1, constrained_layout=True)
+  _, (ax1, ax2) = pp.subplots(2, 1, constrained_layout=True) # type: ignore
   # plot polynomial and function on top graph
   ax1.set_title('Polynomial Approximation')
   ax1.plot(grid, f_grid, color='red', label='Function')
@@ -212,7 +191,7 @@ def plot_result(
   ax2.set_ylabel('Error')
   ax2.grid(True)
   # display optional window title
-  if title is not None:
+  if len(title) > 0:
     pp.get_current_fig_manager().set_window_title(title)
   # window maximized
   # plot_maximize()
